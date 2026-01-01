@@ -1,0 +1,19 @@
+---- INVOICE ----
+
+Laptop      x2   Rs. 104000
+Mouse       x1   Rs. 800
+Keyboard    x1   Rs. 1500
+Air Conditionx1   Rs. 55000
+Monitor     x1   Rs. 13000
+Hard Disk   x1   Rs. 700
+Work Desk   x1   Rs. 2100
+
+-------------------
+
+Subtotal: Rs. 177100
+Discount: Rs. 22710
+Tax: Rs. 27790.2
+
+-------------------
+
+Total Payable: Rs. 182180
