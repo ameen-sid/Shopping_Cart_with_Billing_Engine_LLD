@@ -1,0 +1,316 @@
+1. Responsibilities:
+	-> add products with quantity
+	-> apply discounts
+	-> calculate tax
+	-> generate bill
+	-> remove products
+	-> update quantity
+	-> display cart
+	-> calculate subtotal
+	-> calculate final amount
+	-> save bill into file
+--------------------------------------------------------------------------
+2. Constraints:
+	-> unique id and name
+	-> price must be non-negative
+	-> product details must not change
+	-> if same product adding, update quantity
+	-> quantity must be non-negative
+	-> multiple discounts can be applied
+	-> discount must be applied before tax
+	-> discount not exceed cart total
+	-> final amount must be non-negative
+	-> tax must be applied after all discounts
+	-> tax rate should configured
+	-> billing logic must not modify cart data
+	-> billing should be repeatable
+	-> generate itemized invoice with product name, quantity, unit price, 
+		and total
+	-> display subtotal, discount, tax, and final payable amount
+	-> invoice must be printed on console and saved to invoice.txt
+	-> invoice file should be overwritten on each generation
+	-> menu driven interface
+	-> gracefully handling of invalid input
+--------------------------------------------------------------------------
+3. Responsibilities:
+	-> add products with quantity: 					cart
+	-> apply discounts:								discount
+	-> calculate tax:								tax
+	-> generate bill:								billing
+	-> remove products:								cart
+	-> update quantity: 							cart
+	-> display cart: 								cart
+	-> calculate subtotal:							cart
+	-> calculate final amount: 						billing
+	-> save bill into file: 						billing
+
+Constraints:
+	-> unique id and name: 								product
+	-> price must be non-negative:						product
+	-> product details must not change:					product
+	-> if same product adding, update quantity: 		cart
+	-> quantity must be non-negative:					cart
+	-> multiple discounts can be applied:				discount
+	-> discount must be applied before tax:				discount
+	-> discount not exceed cart total:					discount
+	-> final amount must be non-negative:				billing
+	-> tax must be applied after all discounts:			tax
+	-> tax rate should configured:						tax
+	-> billing logic must not modify cart data:			billing
+	-> billing should be repeatable:					billing
+	-> generate itemized invoice with product name, 
+		quantity, unit price, and total: 				billing
+	-> display subtotal, discount, tax, and final 
+		payable amount:									billing
+	-> invoice must be printed on console and saved to 
+		invoice.txt:									storage
+	-> invoice file should be overwritten on each 
+		generation:										billing
+	-> menu driven interface:							user-interaction
+	-> gracefully handling of invalid input:			user-interaction
+
+Groups Name:
+	-> Product
+	-> Cart
+	-> Discount
+	-> Tax
+	-> Billing
+	-> Invoice
+	-> Storage
+	-> UserInteraction
+
+Responsibilities:
+	-> Product:
+		-> represent product with id, name, price
+	-> Cart:
+        -> add product with quantity
+        -> remove product
+        -> update product quantity
+        // -> display cart items								- doubt
+        -> calculate cart subtotal
+	-> Discount:
+        -> apply discounts on subtotal
+    -> Tax:
+        -> calculate tax on discounted amount
+	-> Billing:
+        -> generate bill
+        -> calculate final payable amount
+        -> coordinate discount and tax application
+	-> Invoice:
+        -> generate itemized invoice data
+        -> format invoice output
+        -> print invoice to console
+	-> Storage:
+        -> save invoice to file
+	-> UserInteraction:
+        -> display menu
+        -> read user input
+        -> trigger cart and billing actions
+
+Constraints:
+	-> Product:
+		-> product id must be unique
+		-> product name must be unique
+		-> product price must be non-negative
+		-> product details must not change once created
+	-> Cart:
+		-> quantity must be non-negative
+		-> adding same product updates quantity
+		-> product must exist before adding to cart
+		-> subtotal is sum of (price × quantity)
+	-> Discount:
+		-> multiple discounts can be applied
+		-> total discount must not exceed cart subtotal
+	-> Tax:
+		-> tax must be applied after all discounts
+		-> tax rate must be configurable
+		-> tax must be zero if taxable amount is zero
+	-> Billing:
+		-> final payable amount must not be negative
+		-> billing must not modify cart state
+		-> billing should produce same result if repeated
+	-> Invoice:
+		-> invoice must show itemized details
+		-> invoice must show subtotal, discount, tax, final amount
+		-> invoice must be printed to console
+	-> Storage:
+		-> invoice must be saved to invoice.txt
+		-> invoice file must be overwritten on each generation
+	-> UserInteraction:
+		-> menu-driven interface
+		-> invalid input must be handled gracefully
+--------------------------------------------------------------------------
+4. Allowed Dependencies:
+	Product  		-> None
+	Cart     		-> Product
+	Discount 		-> None
+	Tax      		-> None
+	Billig   		-> Cart, Discount, Tax
+	Invoice  		-> Billing
+	Storage  		-> Invoice
+	UserInteraction -> Cart, Billing
+--------------------------------------------------------------------------
+5. Public Capabilities:
+	Product: 
+		"give me id, name and price, I will create a product"
+		- Represent immutable product data (id, name, price)
+	Cart: 
+		"give me product and quantity, I will add it into the cart"
+		- Accept a product and quantity to add
+		"give me product, I will remove it from cart with quantity"
+		- Remove an existing product
+		"give me quantity of existing product, I will update the quantity"
+		- Update quantity of an existing product
+		"call me, I will calculate the total price of cart items"
+		- Provide cart subtotal
+		- Provide list of cart items
+	Discount: 
+		"give me subtotal amount, I will tell you discount amount"
+		- Given an amount, return discount amount
+	Tax: 
+		"give me discounted amount, I will tell you the tax amount"
+		- Given an amount, return tax amount
+		"give me tax rate, I will reconfigure it"
+		- Allow tax rate to be configured
+	Billing: 
+		"call me, I will generate bill"
+		- Use cart data to compute billing summary
+		- Coordinate discount and tax calculation
+		- Coordinate discount and tax calculation
+	Invoice: 
+		"call me, I will print invoice in console"
+		- Accept billing result
+		- Format invoice output
+		- Print invoice to console
+	Storage: 
+		"Call me, I will store bill in file/db/json"
+		- Accept invoice data
+		- Persist invoice to file (overwrite)
+	UserInteraction: 
+		"I will display menu, read user input"
+		- Display menu
+		- Read user input
+		- Trigger cart and billing actions
+--------------------------------------------------------------------------
+6. State Ownership:
+	Product:
+		- id
+		- name
+		- price
+	Cart:
+		- list of cart items (product + quantity)
+	Discount:
+		- discount flatDiscountAmount/percentageDiscountRate/thresholdAmount
+	Tax:
+		- tax rate
+	Billing:
+		- stateless
+	Invoice:
+		- stateless
+	Storage:
+		- stateless
+	UserInteraction:
+		- stateless
+--------------------------------------------------------------------------
+7. Classes I think we need:
+	- Product
+	- Cart
+	- Discount (interface, FlatDiscount, PercentageDiscount, 
+		ThresholdDiscount)
+	- Tax
+	- Billing
+	- Invoice
+	- Storage (interface, FileStorage, DBStorage)
+--------------------------------------------------------------------------
+8. Class Responsibilities: 
+	Product:
+		- holds immutable data
+	Cart:
+		- manages cart items
+		- calculates subtotal
+	Discount:
+		- calculate discount amount
+		- set discount (flat amount, rate, threshold) in constructor
+	Tax:
+		- calculate tax amount
+		- update tax rate
+	Billing:
+		- calculate final payable bill
+		- generate bill data
+	Invoice:
+		- display invoice in console
+	Storage:
+		- store invoice in file
+--------------------------------------------------------------------------
+9. Class Design:
+
+class Product:
+	- id: int
+	- name: string
+	- price: double
+	+ Product(id: int, name: string, price: double);
+	+ const getId(): int
+	+ const getName(): string
+	+ const getPrice(): double
+
+class CartItem:
+	- product: const Product*
+	- quantity: int
+	+ CartItem(product: const Product*, quantity: int);
+	+ const getProduct(): const Product*
+	+ const getQuantity(): int
+
+class Cart:
+	- cartItems: vector<CartItem>
+	+ addProduct(product: const Product*, quantity: int): void
+	+ removeProduct(product: const Product*): void
+	+ updateQuantity(product: const Product*, quantity: int): void
+	+ const calculateSubTotal(): double
+	+ const getItems(): vector<CartItem>&
+
+class Discount:
+	+ const calculateDiscount(subtotal: double) as pure virtual: double
+	+ ~Discount(): default
+
+class FlatDiscount : + Discount:
+	- flatAmount: double
+	+ FlatDiscount(flatAmount: double);
+
+class PercentageDiscount : + Discount:
+	- percentage: double
+	+ PercentageDiscount(percentage: double);
+
+class ThresholdDiscount : + Discount:
+	- thresholdAmount: double
+	+ ThresholdDiscount(thresholdAmount: double, discountAmount: double);
+
+class Tax:
+	- taxRate: double
+	+ Tax(taxRate: double);
+	+ const calcualateTax(amountAfterDiscount: double): double
+	+ setTaxRate(taxRate: double): void
+
+class BillData:
+	+ subtotal: double
+	+ totalDiscount: double
+	+ taxAmount: double
+	+ finalAmount: double
+	+ items: vector<CartItem>
+
+class Billing:
+	+ const generateBill(cart: const Cart&, discounts: const vector<Discount*>, tax: const Tax&): BillData
+
+class Invoice:
+	+ const printToConsole(billData: const BillData&): void
+	+ const generateInvoiceText(billData: const BillData&): string
+
+class Storage:
+	+ const save(invoiceText: const stringa&): void
+	+ ~Storage(): default
+
+class FileStorage : + Storage:
+	// pass
+
+class DBStorage : + Storage:
+	// pass
+--------------------------------------------------------------------------
